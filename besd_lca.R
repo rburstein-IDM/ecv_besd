@@ -17,13 +17,17 @@ library(poLCA)
 library(haven)
 library(fastDummies)
 library(lavaan)
+library(sysfonts)
+library(showtext)
 
-# plotting things
+# plottishowtext# plotting things
 font_add("Garamond", "GARA.TTF")
 font_families()
 showtext_auto()
 theme_set(theme_classic() + 
             theme(text = element_text(size=25,family = "Garamond")))
+cols <- c('#478CCF','#FF4E88','#88D66C','#FF8225')
+bcnsord <- c("Thinking/Feeling", "Social Processes", "Motivation", "Practical Issues")
 
 # Set up data and code pointers 
 # (Note Branly: update these to point to locations on your computer)
@@ -37,6 +41,7 @@ df23 <- as.data.table(read_dta(file.path(datadir23,'ECV_2023_Vaccination_V4_Mena
 
 # Load in the codebook
 cb <- fread('codebook.csv')
+besd_cb <- fread('besd_codebook.csv')
 
 # load in shapefile
 pshp <- readRDS('province_shapefile.RDS')
@@ -199,7 +204,7 @@ onehot <- function(v, data=df, dummydata, onetwo=FALSE){
 
 
 # function to plot cluster distributiuon over vxstat
-vxstatclusterplot <- function(data=df,clusters,legendposition='right'){
+vxstatclusterplot <- function(data=df,clusters,legendposition='right',title=''){
   
   # how well do these categories span vxstatus?
   clusters[['cluster']] <- clusters[[names(clusters)[grepl('_cluster',names(clusters))]]]
@@ -215,6 +220,7 @@ vxstatclusterplot <- function(data=df,clusters,legendposition='right'){
     scale_fill_manual(values=rev(c('#FF6363','#F8B400','#125B50')),name='Vx Status') +
     ylab('') +
     xlab('Percent of responses') +
+    ggtitle(title) +
     theme(legend.position=legendposition)
   
 }
@@ -275,12 +281,16 @@ df <- merge(df,pi_cl$cl)
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ## DESCRIPTIVE ANALYSIS OF LCA RESULTS
 
-# combined plot of all BeSD domains
+## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# combined plot of all BeSD domains and outcomes
+pdf('figure2 -- LCA and vx outcomes.pdf',width=27,height=18,onefile=FALSE)
 egg::ggarrange(
-  vxstatclusterplot(clusters=tf_cl$cl, legendposition='none'),
-  vxstatclusterplot(clusters=sp_cl$cl, legendposition='none'), 
-  vxstatclusterplot(clusters=m_cl$cl, legendposition='none'),
-  vxstatclusterplot(clusters=pi_cl$cl))
+  vxstatclusterplot(clusters=tf_cl$cl, legendposition='none',title='Thinking/Feeling'),
+  vxstatclusterplot(clusters=sp_cl$cl, legendposition='none',title='Social Processes'), 
+  vxstatclusterplot(clusters=m_cl$cl,  legendposition='none',title='Motivation'),
+  vxstatclusterplot(clusters=pi_cl$cl, title='Practical Issues'))
+dev.off()
+
 
 # coverage by motivation versus practical issues
 tmp <- merge(m_cl$cl,pi_cl$cl)
@@ -305,30 +315,25 @@ ggplot(ctmp) +
   xlab('Percent of responses') +
   theme(legend.position='right')
 
-# user: Write a haiku about the data
-# assistant: ok, here is a haiku about the data:
-#           "Clusters of feeling
-#            Motivation and issues
-#            Zero-dose revealed"
 
-
-
-
+## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # province maps
-provmap <- function(data=df,cllab,legendposition='none'){
+provmap <- function(data=df,cllab,legendposition='right',maxcol='black',title=''){
   data$cllab <- data[[cllab]]
   tmp <- data[, .(N=sum(weight)), by = c('province','cllab')]
   tmp <- tmp[, pct := N/sum(N), by = c('province')]
   tmp <- merge(pshp,tmp,by='province')
   
+  # get centroid
   ggplot(tmp) +
     geom_sf(aes(fill=pct*100),color='black') +
-    scale_fill_gradient(low='white',high='black',
-                        limits=c(0,100),
-                        name='Percent of responses') +
+    scale_fill_gradient(low='white',high=maxcol,
+                       # limits=c(0,100),
+                        name='Percent of\nresponses') +
     theme_minimal() +
     facet_wrap(~cllab) +
     theme(legend.position='right') +
+    ggtitle(title) +
     #labs(title=gsub('_cllab','',cllab)) +
     theme(axis.text.x=element_blank(),
           axis.text.y=element_blank(),
@@ -336,15 +341,18 @@ provmap <- function(data=df,cllab,legendposition='none'){
           axis.title.y=element_blank(),
           panel.grid.major = element_blank(), 
           panel.grid.minor = element_blank(),
-          legend.position=legendposition)
+          legend.position=legendposition,
+          text=element_text(size=20,family = "Garamond"))
+
   
 }
-egg::ggarrange(provmap(cllab='thinkingfeeling_cllab'),
-               provmap(cllab='socialprocesses_cllab'),
-               provmap(cllab='motivation_cllab'),
-               provmap(cllab='practicalissues_cllab',legendposition='right'),
+pdf('figure3 -- LCA and province.pdf',width=16,height=27,onefile=FALSE)
+egg::ggarrange(provmap(cllab='thinkingfeeling_cllab',maxcol=cols[1],title='Thinking/Feeling'),
+               provmap(cllab='socialprocesses_cllab',maxcol=cols[2],title='Social Processes'),
+               provmap(cllab='motivation_cllab'     ,maxcol=cols[3],title='Motivation'),
+               provmap(cllab='practicalissues_cllab',maxcol=cols[4],title='Practical Issues'),
                ncol=1)
-
+dev.off()
 
 # over survey year
 # over geography (maps)
@@ -353,14 +361,88 @@ egg::ggarrange(provmap(cllab='thinkingfeeling_cllab'),
 
 
 
+## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## FIGURE 1 - Question breakdown across each BeSD domain/component (one large figure)
 
 
+# read in the besd_codebook and format it
+besd_cbl <- melt(besd_cb, id.vars=c('name',	'description',	'besd_category','besd_category_nice',	'question'),
+                 variable.name = 'value', value.name = 'value_label')
+besd_cbl[,value := gsub('response_','',value)]
+besd_cbl <- besd_cbl[value_label!='']
+besd_cbl[, value_label:=paste0(value,'. ',value_label)]
+
+# collapse
+cllabvars <- names(df)[grepl('_cllab',names(df))]
+tmp <- df[,c('id',pi_vars,tf_vars, sp_vars ,m_vars,cllabvars),with=F]
+tmp <- melt(tmp, id.vars=c('id',cllabvars))
+tmp[, value:=as.character(value)]
+
+# merge codebook
+tmp <- merge(tmp, besd_cbl, by.x=c('variable','value'), by.y=c('name','value'))
+
+# call out specific LCA class for each row (since they are question associated)
+tmp <- tmp %>%
+  mutate(cllab_associated = case_when(
+    besd_category == "motivation"      ~ motivation_cllab,
+    besd_category == "thinkingfeeling" ~ thinkingfeeling_cllab,
+    besd_category == "socialprocesses" ~ socialprocesses_cllab,
+    besd_category == "practicalissues" ~ practicalissues_cllab,
+    TRUE ~ NA_character_
+  ))
+
+# get pct
+tmp <- tmp[, .(N=.N), by = c( 'question','value_label','cllab_associated','besd_category','besd_category_nice')]
+tmp <- tmp[, pct := N/sum(N), by = c('question','cllab_associated','besd_category','besd_category_nice')]
+
+# add zeros
+for(q in unique(tmp$question)){
+  for(v in unique(tmp[question==q]$value_label)){
+    for(c in unique(tmp[question==q]$cllab_associated)){
+      if(nrow(tmp[question==q & value_label==v & cllab_associated==c])==0){
+        tmp <- rbind(tmp,data.table(question=q,value_label=v,
+                                    cllab_associated=c,N=0,pct=0,
+                                    besd_category=unique(tmp[question==q]$besd_category),
+                                    besd_category_nice=unique(tmp[question==q]$besd_category_nice)))
+      }
+    }
+  }
+}
 
 
+# plot a facetted tile plot
+
+listofplots <- list()
+for(i in 1:4){
+  col <- cols[i]
+  bcn <- bcnsord[i]
+  
+  listofplots[[i]] <-
+  ggplot(tmp[besd_category_nice==bcn]) +
+    geom_tile(aes(value_label,cllab_associated,fill=pct),color=col) +
+    facet_wrap(~str_wrap(question, width = 40),scales='free_x') +
+   theme(axis.text.y=element_text(size=18,lineheight = .5),
+         axis.text.x=element_text(size=18,lineheight = .5,angle=45,hjust=1),
+        strip.text=element_text(size=18),
+        legend.position = 'none') +
+    # add percent text
+    geom_text(aes(value_label,cllab_associated,label=paste0(round(pct*100,0),'%')),
+              size=6, color='black') +
+    ylab('') + #Latent Class Assigned') +
+    xlab('') + #Question Response') +
+    ggtitle(paste0(bcn)) +
+    scale_fill_gradient(low='white',high=col, 
+                        label=scales::percent, 
+                        limits=c(0,1),
+                        name = '') 
+} 
+pdf('figure1 -- LCA and questions.pdf',width=20,height=35,onefile=FALSE)
+egg::ggarrange(listofplots[[1]],listofplots[[2]],listofplots[[3]],listofplots[[4]],ncol=1)
+dev.off()
 
 
-
-
+## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## Correlation of BeSD components with BeSD components
 
 
 
@@ -370,5 +452,82 @@ egg::ggarrange(provmap(cllab='thinkingfeeling_cllab'),
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+## ________________
+# quick one, card retention over time for carolina
+df[, dayssincestart := as.numeric(int_date-min(int_date)), by = .(svyyear,interviewer)]
+df[,interviewer2:=factor(paste0(svyyear,'_',interviewer))]
+df[, Ninterviewer := .N, by = .(interviewer2)]
+
+ggplot(df[Ninterviewer>10]) +
+  geom_histogram(aes(dayssincestart))
+
+jtools::summ(glm(opv1_card==1 ~ dayssincestart + svyyear + province ,
+                 data=df[Ninterviewer>10 & dayssincestart<40],
+                 family=binomial))
+
+library(mgcv)
+m <- mgcv::bam(opv1_card==1 ~ s(dayssincestart) ,
+               data=df[Ninterviewer>30 & dayssincestart<30])
+plot(m)
+
+tmp <- df[Ninterviewer>10 & dayssincestart<30,.(N=.N),by=.(dayssincestart,opv1_card)]
+tmp[, pct := N/sum(N), by = .(dayssincestart)]
+ggplot(tmp[opv1_card==1 & dayssincestart>0]) +
+  geom_point(aes(dayssincestart,pct*100,size=N)) +
+  ylab('Proportion Reported Card Retention') +
+  xlab('Days since interviewer started') +
+  theme(legend.position='right')
+
+# int hour
+df[, hour := as.numeric(substr(int_time,1,2))]
+df[,hrsincestart :=hour-min(hour), by = .(int_date,interviewer2)]
+ggplot(df[Ninterviewer>10 & svyyear=='ECV 2022' & hrsincestart<18]) +
+  geom_histogram(aes(hrsincestart))
+jtools::summ(glm(opv1_card==1 ~ hour, data=df[svyyear=='ECV 2022'], family='binomial'),exp=T)
+
+tmp <- df[svyyear=='ECV 2022' & hrsincestart<20,.(N=.N),by=.(hrsincestart,opv1_card)]
+tmp[, pct := N/sum(N), by = .(hrsincestart)]
+
+ggplot(tmp[opv1_card==1 &N>1000]) +
+  geom_point(aes(hrsincestart,pct*100,size=N)) +
+  ylab('Proportion Reported Card Retention') +
+  xlab('Hrs since interviewer started working that day') +
+  scale_x_continuous(breaks=0:10) +
+  theme(legend.position='right')
+
+
+
+# per interviewer average retention by hour since started working
+tmp <- df[svyyear=='ECV 2022' & Ninterviewer>30]
+tmp[,m := mean(opv1_card==1), by = .(interviewer2)]
+tmp[,hrsincestart :=hour-min(hour), by = .(int_date,interviewer2)]
+tmp <- tmp[,.(ratio=100*mean(opv1_card==1)/m), by = .(interviewer2,hrsincestart)]
+tmp <- tmp[,.(ratio=median(ratio,na.rm=T)), by = .(hrsincestart)]
+ggplot(tmp[hrsincestart<=11]) +
+  geom_point(aes(hrsincestart,ratio*1)) +
+  geom_hline(yintercept=100,color='pink') +
+  ylab('Avg. ratio of card retention reported') +
+  xlab('Hrs since interviewer started working that day') +
+  scale_x_continuous(breaks=0:10) +
+  theme(legend.position='right')
+
+# 
+# library(lme4)
+# m<-glmer(opv1_card==1 ~ dayssincestart + svyyear + province + (1|interviewer2), data=df, family='binomial')
+# jtools::summ(m,exp=TRUE)
+# 
 
 

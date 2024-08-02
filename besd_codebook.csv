@@ -1,0 +1,20 @@
+﻿name,description,besd_category_nice,besd_category,question,response_1,response_2,response_3,response_4
+tf_benefits,Confidence in vaccine benefits,Thinking/Feeling,thinkingfeeling,How important do you think vaccines are for your child’s health? Would you say…,Not at all important,A little important,Moderately important,Very important
+tf_safety,Confidence in vaccine safety,Thinking/Feeling,thinkingfeeling,How safe do you think vaccines are for your child? Would you say,Not at all safe,A little safe,Moderately Safe,Very safe
+tf_healthworkers,Confidence in  healthworkers,Thinking/Feeling,thinkingfeeling,How much do you trust the health workers who give children vaccines? Would you say you trust them…,Not at all,A little,Moderately,Very much
+m_intent,Intention to get the child vaccinated ,Motivation,motivation,"If you have another child in the future, would you accept all the recommended vaccines from the MoH?",No,Not sure,Yes,
+sp_familynorms,Family norms,Social Processes,socialprocesses,Do you think most of your close family and friends want you to get your child vaccinated?,Yes,No,,
+sp_peernorms,Peer norms,Social Processes,socialprocesses,Do you think most parents you know get their children vaccinated?,Yes,No,,
+sp_religiousleader,Religious leader norms,Social Processes,socialprocesses,Do you think your religious leaders want you to get your child vaccinated?,Yes,No,,
+sp_communityleader,Community leader norms,Social Processes,socialprocesses,Do you think your community leaders want you to get your child vaccinated?,Yes,No,,
+sp_healthworkerreco,Health worker recommendation,Social Processes,socialprocesses,Has a health worker recommended your child be vaccinated?,Yes,No,,
+sp_travelautonomy,Mother's travel autonomy,Social Processes,socialprocesses,"If it was time for your child to get vaccinated, would the mother need permission to take your child to the clinic?",Yes,No,,
+pi_knowwhere,Know where to get child vaccinated,Practical Issues,practicalissues,Do you know where to go to get your child vaccinated?,Yes,No,,
+pi_affordability,Affordability,Practical Issues,practicalissues,"How easy is it to pay for vaccination? When you think about the cost, please consider any payments to the clinic, the cost of getting there, plus the cost of taking time away from work. Would you say…",Not at all easy,Quite difficult,Moderately easy,Very easy
+pi_tookchild,Took child for vaccination,Practical Issues,practicalissues,Have you personally ever taken your youngest child to get vaccinated?,Yes,No,,
+pi_receivedrecall,Received recall,Practical Issues,practicalissues,l Have you ever been contacted about your child being due for vaccination?,Yes,No,,
+pi_vxavailability,Vaccination availability,Practical Issues,practicalissues,Have you ever been turned away when you tried to get your child vaccinated?,Yes,No,,
+pi_easeofaccess,Ease of access,Practical Issues,practicalissues,How easy is it for your child to get vaccination services? Would you say…,Not at all easy,Quite difficult,Moderately easy,Very easy
+pi_reasonslowaccess,Reasons for low ease of access,Practical Issues,practicalissues,What makes it hard for your child to get vaccination services? Would you say… ,,,,
+pi_servicesatisfation,Service satisfaction,Practical Issues,practicalissues,How satisfied are you with the vaccination services? Would you say…,Not at all satisfied,A little satisfied,Moderately satisfied,Very satisfied
+pi_servicequality,Service quality,Practical Issues,practicalissues,What is not satisfactory about the vaccination services? Would you say… ,,,,
