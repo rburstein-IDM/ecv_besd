@@ -19,6 +19,8 @@ library(fastDummies)
 library(lavaan)
 library(sysfonts)
 library(showtext)
+library(egg)
+library(patchwork)
 
 # plottishowtext# plotting things
 font_add("Garamond", "GARA.TTF")
@@ -26,7 +28,7 @@ font_families()
 showtext_auto()
 theme_set(theme_classic() + 
             theme(text = element_text(size=25,family = "Garamond")))
-cols <- c('#478CCF','#FF4E88','#88D66C','#FF8225')
+colz <- c('#478CCF','#FF4E88','#88D66C','#FF8225')
 bcnsord <- c("Thinking/Feeling", "Social Processes", "Motivation", "Practical Issues")
 
 # Set up data and code pointers 
@@ -40,7 +42,7 @@ df22 <- as.data.table(read_dta(file.path(datadir22,'ECV_2022_VAC_Menages_Mere_En
 df23 <- as.data.table(read_dta(file.path(datadir23,'ECV_2023_Vaccination_V4_Menages_Mere_Enfants_Dataset.dta')))
 
 # Load in the codebook
-cb <- fread('codebook.csv')
+cb <- fread('codebook_bm.csv')
 besd_cb <- fread('besd_codebook.csv')
 
 # load in shapefile
@@ -83,10 +85,16 @@ df[, ui := as.numeric(vacc_penta1==1&(vacc_mcv1==0|vacc_penta3==0))]
 df[, vxstatus := 'Complete']
 df[ui==1, vxstatus := 'Under-Immunized']
 df[zd==1, vxstatus := 'Zero-Dose']
-
+df[, fvxstatus := factor(vxstatus, levels=c('Zero-Dose','Under-Immunized','Complete'))]
 
 # id variable
 df[, id := .I]
+
+# haven_labelled variables to factors using their haven labels, starting with education_level_hhlead
+labelledvars <- c('strate', 'sex_hhlead', 'etat_civil_hhlead', 'education_level_hhlead','religion_hhlead',
+                  'ethnie_hhlead','etat_civil_caregiver','age_caregiver','education_level_caregiver',
+                  'religion_caregiver','wealth_quintile')
+for(v in labelledvars) df[[v]] <- as_factor(df[[v]])
 
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -278,8 +286,68 @@ df <- merge(df,m_cl$cl)
 df <- merge(df,pi_cl$cl)
 
 
+
+
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-## DESCRIPTIVE ANALYSIS OF LCA RESULTS
+# test between 2 and 6 latent classes for each domain
+# this is slow, so only run if needed
+
+if(TRUE == FALSE) {
+  
+  # run the models
+  tflcalist <- splcalist <- mlcalist <- pilcalist <- list()
+  for(k in 2:6){
+    message(k)
+    tflcalist[[k]] <- clusterfunc(data=df,vars=tf_vars, k = k, prefix='thinkingfeeling',method='lca',printplot=FALSE)
+    splcalist[[k]] <- clusterfunc(data=df,vars=sp_vars, k = k, prefix='socialprocesses',method='lca',printplot=FALSE)
+    if(k<4) mlcalist[[k]]  <- clusterfunc(data=df,vars=m_vars, k = k, prefix='motivation',method='lca',printplot=FALSE)
+    pilcalist[[k]] <- clusterfunc(data=df,vars=pi_vars, k = k, prefix='practicalissues',method='lca',printplot=FALSE)
+  }
+  
+  # likelihood ratio tests to compare models (get pval)
+  lrt <- function(mod1, mod2){
+    pchisq(-2 * (mod1$llik - mod2$llik),
+           mod2$npar - mod1$npar,
+           lower.tail = FALSE)
+  }
+  
+  # extract goodness of fit stats (AIC, BIC, G^2, X^2) for each from the $model object
+  grabfitstats <- function(modlist,ks,domainname){
+    message(domainname)
+    out <-
+    data.table(
+      domain = domainname,
+      k      = ks,
+      loglik = unlist(lapply(modlist, function(x) x$model$llik)),
+      AIC    = unlist(lapply(modlist, function(x) x$model$aic)),
+      BIC    = unlist(lapply(modlist, function(x) x$model$bic)),
+      G2     = unlist(lapply(modlist, function(x) x$model$Gsq)),
+      X2     = unlist(lapply(modlist, function(x) x$model$Chisq)),
+      npar   = unlist(lapply(modlist, function(x) x$model$npar))
+    )
+   for(K in ks[2]:ks[length(ks)]){ # llik ratio test
+    out[k==K, lrt_pval := lrt(modlist[[K-1]]$model,modlist[[K]]$model)]
+   }
+    return(out)
+  }
+  # make a table across all indicators
+  fitstats <- rbindlist(
+    list(grabfitstats(tflcalist,2:6,'Thinking/Feeling'),
+         grabfitstats(splcalist,2:6,'Social Processes'),
+         grabfitstats(mlcalist,2:3,'Motivation'),
+         grabfitstats(pilcalist,2:6,'Practical Issues'))
+  )
+  fitstats
+  
+  # Note that we get statistically significant improvements when add classes
+  #  though, given the large SS, this is expected. Practical considerations are
+  #  important here too. 
+  
+  # TODO. could bootstrap to test stability
+  
+  # Also note, need to asses practicality of the classes/do they make sense (do this with plots later)
+}
+
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # combined plot of all BeSD domains and outcomes
@@ -363,6 +431,8 @@ dev.off()
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ## FIGURE 1 - Question breakdown across each BeSD domain/component (one large figure)
+###           Item-Response Probabilities (Conditional Probabilities):
+###           The probability of endorsing each item given class membership, which helps in understanding the characteristics of each class.
 
 
 # read in the besd_codebook and format it
@@ -414,7 +484,7 @@ for(q in unique(tmp$question)){
 
 listofplots <- list()
 for(i in 1:4){
-  col <- cols[i]
+  col <- colz[i]
   bcn <- bcnsord[i]
   
   listofplots[[i]] <-
@@ -446,10 +516,99 @@ dev.off()
 
 
 
+
+## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## Demographic Variables plots
+
+# AS PLOT
+
+demdistplot <- function(dv, weighted = TRUE) {
+  message(paste(dv,'----------'))
+  tmp <- copy(df)
+  
+  if(dv=='age_caregiver_grp') 
+    tmp <- tmp[as.numeric(as.character(age_caregiver)) < 46]
+  
+  if(weighted==FALSE) tmp$weight <- 1
+  tmp <- tmp[,.(N=sum(weight)),by=c(dv,cllabvars)]
+  tmp <- melt(tmp, id.vars=c(dv,'N'), variable.name = 'besd_category', value.name = 'value_label')
+  tmp <- tmp[, NN := sum(N), by = c(dv,'besd_category')]
+  tmp[, pct := N/NN]
+  tmp[, dv := get(dv)]
+  tmp[, besd_category := gsub('_cllab','',besd_category)]
+  tmp <- merge(tmp, unique(besd_cbl[,c('besd_category','besd_category_nice')]), by='besd_category')
+  
+    
+  plotlist <- list()
+  for(c in 1:4){
+    cat <- c("Thinking/Feeling","Social Processes","Motivation" , "Practical Issues")[c]    
+    message(cat)
+    tmpp <- tmp[besd_category_nice==cat]
+    nvals <- length(unique(tmpp$value_label))
+    CLZ <- c('#F9DBBA','#5B99C2','#1A4870')
+    if(nvals==2) CLZ <- CLZ[c(1,3)]
+    
+    plotlist[[c]] <-
+      ggplot(tmpp) +
+        geom_bar(aes(pct,dv,fill=value_label),position='stack',stat='identity') +
+        ggtitle(cat) +
+        theme(axis.text.y=element_text(angle=0,hjust=1),
+              legend.position='top')+
+        scale_x_continuous(labels=scales::percent, name = '') +
+        scale_fill_manual(values=rev(CLZ), name='') + ylab('') +
+       guides(fill = guide_legend(ncol = 1))
+  }
+  
+  plotlist[[5]] <-
+    ggplot(tmpp) +
+      geom_bar(aes(dv,N),fill='darkgrey',stat='identity') +
+      theme(axis.text.y=element_blank(),
+          axis.line.y =element_blank(),
+          axis.ticks.y=element_blank(),
+          legend.position='right')+
+      ggtitle(dv) + 
+      scale_fill_manual(values=CLZ, name='') + xlab('') + ylab('') 
+    
+  # patchwork plot them
+  layout <- plotlist[[5]] /
+    (plotlist[[1]]+plotlist[[2]]) /
+    (plotlist[[3]]+plotlist[[4]]) 
+    plot_layout(heights = c(0.3, 1, 1))
+  
+  # Display the combined plot
+  return(layout)
+}
+
+
+demvars <- 
+  c('strate', 'sex_hhlead', 'etat_civil_hhlead', 'education_level_hhlead','religion_hhlead',
+    'ethnie_hhlead','etat_civil_caregiver','age_caregiver_grp','education_level_caregiver',
+    'religion_caregiver','wealth_quintile')
+
+pdf('figure4 -- LCA and demographics.pdf',width=15,height=17)
+for(dvv in demvars) plot(demdistplot(dvv))
+dev.off()
+
+# AS TABLE (TODO)
+
+
+
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ## SEM
 
 
+## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
+## ordinal regression
+#library(MASS)
+#m <- polr(fvxstatus ~ thinkingfeeling_cllab + socialprocesses_cllab + motivation_cllab + practicalissues_cllab, data=data.frame(df))
+#summary(m)
+
+
+## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
+## multinomial regression
+## Spell out the different assumptions from each model
+# m <- multinom(vxstatus ~ thinkingfeeling_cllab + socialprocesses_cllab + motivation_cllab + practicalissues_cllab, data=df)
+# summary(m)
 
 
 
@@ -465,69 +624,76 @@ dev.off()
 
 
 
-## ________________
-# quick one, card retention over time for carolina
-df[, dayssincestart := as.numeric(int_date-min(int_date)), by = .(svyyear,interviewer)]
-df[,interviewer2:=factor(paste0(svyyear,'_',interviewer))]
-df[, Ninterviewer := .N, by = .(interviewer2)]
-
-ggplot(df[Ninterviewer>10]) +
-  geom_histogram(aes(dayssincestart))
-
-jtools::summ(glm(opv1_card==1 ~ dayssincestart + svyyear + province ,
-                 data=df[Ninterviewer>10 & dayssincestart<40],
-                 family=binomial))
-
-library(mgcv)
-m <- mgcv::bam(opv1_card==1 ~ s(dayssincestart) ,
-               data=df[Ninterviewer>30 & dayssincestart<30])
-plot(m)
-
-tmp <- df[Ninterviewer>10 & dayssincestart<30,.(N=.N),by=.(dayssincestart,opv1_card)]
-tmp[, pct := N/sum(N), by = .(dayssincestart)]
-ggplot(tmp[opv1_card==1 & dayssincestart>0]) +
-  geom_point(aes(dayssincestart,pct*100,size=N)) +
-  ylab('Proportion Reported Card Retention') +
-  xlab('Days since interviewer started') +
-  theme(legend.position='right')
-
-# int hour
-df[, hour := as.numeric(substr(int_time,1,2))]
-df[,hrsincestart :=hour-min(hour), by = .(int_date,interviewer2)]
-ggplot(df[Ninterviewer>10 & svyyear=='ECV 2022' & hrsincestart<18]) +
-  geom_histogram(aes(hrsincestart))
-jtools::summ(glm(opv1_card==1 ~ hour, data=df[svyyear=='ECV 2022'], family='binomial'),exp=T)
-
-tmp <- df[svyyear=='ECV 2022' & hrsincestart<20,.(N=.N),by=.(hrsincestart,opv1_card)]
-tmp[, pct := N/sum(N), by = .(hrsincestart)]
-
-ggplot(tmp[opv1_card==1 &N>1000]) +
-  geom_point(aes(hrsincestart,pct*100,size=N)) +
-  ylab('Proportion Reported Card Retention') +
-  xlab('Hrs since interviewer started working that day') +
-  scale_x_continuous(breaks=0:10) +
-  theme(legend.position='right')
 
 
 
-# per interviewer average retention by hour since started working
-tmp <- df[svyyear=='ECV 2022' & Ninterviewer>30]
-tmp[,m := mean(opv1_card==1), by = .(interviewer2)]
-tmp[,hrsincestart :=hour-min(hour), by = .(int_date,interviewer2)]
-tmp <- tmp[,.(ratio=100*mean(opv1_card==1)/m), by = .(interviewer2,hrsincestart)]
-tmp <- tmp[,.(ratio=median(ratio,na.rm=T)), by = .(hrsincestart)]
-ggplot(tmp[hrsincestart<=11]) +
-  geom_point(aes(hrsincestart,ratio*1)) +
-  geom_hline(yintercept=100,color='pink') +
-  ylab('Avg. ratio of card retention reported') +
-  xlab('Hrs since interviewer started working that day') +
-  scale_x_continuous(breaks=0:10) +
-  theme(legend.position='right')
 
 # 
-# library(lme4)
-# m<-glmer(opv1_card==1 ~ dayssincestart + svyyear + province + (1|interviewer2), data=df, family='binomial')
-# jtools::summ(m,exp=TRUE)
 # 
-
-
+# 
+# ## ________________
+# # quick one UNRELATED, card retention over time for carolina
+# df[, dayssincestart := as.numeric(int_date-min(int_date)), by = .(svyyear,interviewer)]
+# df[,interviewer2:=factor(paste0(svyyear,'_',interviewer))]
+# df[, Ninterviewer := .N, by = .(interviewer2)]
+# 
+# ggplot(df[Ninterviewer>10]) +
+#   geom_histogram(aes(dayssincestart))
+# 
+# jtools::summ(glm(opv1_card==1 ~ dayssincestart + svyyear + province ,
+#                  data=df[Ninterviewer>10 & dayssincestart<40],
+#                  family=binomial))
+# 
+# library(mgcv)
+# m <- mgcv::bam(opv1_card==1 ~ s(dayssincestart) ,
+#                data=df[Ninterviewer>30 & dayssincestart<30])
+# plot(m)
+# 
+# tmp <- df[Ninterviewer>10 & dayssincestart<30,.(N=.N),by=.(dayssincestart,opv1_card)]
+# tmp[, pct := N/sum(N), by = .(dayssincestart)]
+# ggplot(tmp[opv1_card==1 & dayssincestart>0]) +
+#   geom_point(aes(dayssincestart,pct*100,size=N)) +
+#   ylab('Proportion Reported Card Retention') +
+#   xlab('Days since interviewer started') +
+#   theme(legend.position='right')
+# 
+# # int hour
+# df[, hour := as.numeric(substr(int_time,1,2))]
+# df[,hrsincestart :=hour-min(hour), by = .(int_date,interviewer2)]
+# ggplot(df[Ninterviewer>10 & svyyear=='ECV 2022' & hrsincestart<18]) +
+#   geom_histogram(aes(hrsincestart))
+# jtools::summ(glm(opv1_card==1 ~ hour, data=df[svyyear=='ECV 2022'], family='binomial'),exp=T)
+# 
+# tmp <- df[svyyear=='ECV 2022' & hrsincestart<20,.(N=.N),by=.(hrsincestart,opv1_card)]
+# tmp[, pct := N/sum(N), by = .(hrsincestart)]
+# 
+# ggplot(tmp[opv1_card==1 &N>1000]) +
+#   geom_point(aes(hrsincestart,pct*100,size=N)) +
+#   ylab('Proportion Reported Card Retention') +
+#   xlab('Hrs since interviewer started working that day') +
+#   scale_x_continuous(breaks=0:10) +
+#   theme(legend.position='right')
+# 
+# 
+# 
+# # per interviewer average retention by hour since started working
+# tmp <- df[svyyear=='ECV 2022' & Ninterviewer>30]
+# tmp[,m := mean(opv1_card==1), by = .(interviewer2)]
+# tmp[,hrsincestart :=hour-min(hour), by = .(int_date,interviewer2)]
+# tmp <- tmp[,.(ratio=100*mean(opv1_card==1)/m), by = .(interviewer2,hrsincestart)]
+# tmp <- tmp[,.(ratio=median(ratio,na.rm=T)), by = .(hrsincestart)]
+# ggplot(tmp[hrsincestart<=11]) +
+#   geom_point(aes(hrsincestart,ratio*1)) +
+#   geom_hline(yintercept=100,color='pink') +
+#   ylab('Avg. ratio of card retention reported') +
+#   xlab('Hrs since interviewer started working that day') +
+#   scale_x_continuous(breaks=0:10) +
+#   theme(legend.position='right')
+# 
+# # 
+# # library(lme4)
+# # m<-glmer(opv1_card==1 ~ dayssincestart + svyyear + province + (1|interviewer2), data=df, family='binomial')
+# # jtools::summ(m,exp=TRUE)
+# # 
+# 
+# 
