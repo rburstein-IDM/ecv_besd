@@ -21,6 +21,11 @@ library(sysfonts)
 library(showtext)
 library(egg)
 library(patchwork)
+library(sjPlot)
+library(broom)
+library(jtools)
+library(Hmisc)
+library(forcats)
 
 # plottishowtext# plotting things
 font_add("Garamond", "GARA.TTF")
@@ -310,20 +315,31 @@ if(TRUE == FALSE) {
            mod2$npar - mod1$npar,
            lower.tail = FALSE)
   }
+  entropyfunc <- function(model){ 
+    if(is.null(model)){
+      return(NA)
+    } else {
+      posterior_probs <- model$posterior
+      entropy_individual <- function(p) { p <- p[p > 0]; -sum(p * log(p)) }
+      entropy <- mean(apply(posterior_probs, 1, entropy_individual))
+      return(entropy)
+    }
+  }
   
   # extract goodness of fit stats (AIC, BIC, G^2, X^2) for each from the $model object
   grabfitstats <- function(modlist,ks,domainname){
     message(domainname)
     out <-
     data.table(
-      domain = domainname,
-      k      = ks,
-      loglik = unlist(lapply(modlist, function(x) x$model$llik)),
-      AIC    = unlist(lapply(modlist, function(x) x$model$aic)),
-      BIC    = unlist(lapply(modlist, function(x) x$model$bic)),
-      G2     = unlist(lapply(modlist, function(x) x$model$Gsq)),
-      X2     = unlist(lapply(modlist, function(x) x$model$Chisq)),
-      npar   = unlist(lapply(modlist, function(x) x$model$npar))
+      domain  = domainname,
+      k       = ks,
+      loglik  = unlist(lapply(modlist[ks],  function(x) x$model$llik)),
+      AIC     = unlist(lapply(modlist[ks],  function(x) x$model$aic)),
+      BIC     = unlist(lapply(modlist[ks],  function(x) x$model$bic)),
+      G2      = unlist(lapply(modlist[ks],  function(x) x$model$Gsq)),
+      X2      = unlist(lapply(modlist[ks],  function(x) x$model$Chisq)),
+      entropy = lapply(lapply(modlist[ks],  function(x) x$model),entropyfunc),
+      npar    = unlist(lapply(modlist[ks],  function(x) x$model$npar))
     )
    for(K in ks[2]:ks[length(ks)]){ # llik ratio test
     out[k==K, lrt_pval := lrt(modlist[[K-1]]$model,modlist[[K]]$model)]
@@ -338,6 +354,7 @@ if(TRUE == FALSE) {
          grabfitstats(pilcalist,2:6,'Practical Issues'))
   )
   fitstats
+  fwrite(fitstats,'fitstats.csv')
   
   # Note that we get statistically significant improvements when add classes
   #  though, given the large SS, this is expected. Practical considerations are
@@ -345,8 +362,14 @@ if(TRUE == FALSE) {
   
   # TODO. could bootstrap to test stability
   
-  # Also note, need to asses practicality of the classes/do they make sense (do this with plots later)
 }
+
+
+
+## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#  how does each question do in explaining the classes (were the BeSD core questions the right ones?)
+#  TODO
+
 
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -363,7 +386,7 @@ dev.off()
 # coverage by motivation versus practical issues
 tmp <- merge(m_cl$cl,pi_cl$cl)
 tmp <- merge(tmp,df[,c('id','vxstatus'),with=F])
-jtools::summ(
+summ(
     glm(vxstatus=='Zero-Dose'~motivation_cllab*practicalissues_cllab,
         data=tmp,family='binomial'), exp=TRUE)
 
@@ -415,10 +438,10 @@ provmap <- function(data=df,cllab,legendposition='right',maxcol='black',title=''
   
 }
 pdf('figure3 -- LCA and province.pdf',width=16,height=27,onefile=FALSE)
-egg::ggarrange(provmap(cllab='thinkingfeeling_cllab',maxcol=cols[1],title='Thinking/Feeling'),
-               provmap(cllab='socialprocesses_cllab',maxcol=cols[2],title='Social Processes'),
-               provmap(cllab='motivation_cllab'     ,maxcol=cols[3],title='Motivation'),
-               provmap(cllab='practicalissues_cllab',maxcol=cols[4],title='Practical Issues'),
+egg::ggarrange(provmap(cllab='thinkingfeeling_cllab',maxcol=colz[1],title='Thinking/Feeling'),
+               provmap(cllab='socialprocesses_cllab',maxcol=colz[2],title='Social Processes'),
+               provmap(cllab='motivation_cllab'     ,maxcol=colz[3],title='Motivation'),
+               provmap(cllab='practicalissues_cllab',maxcol=colz[4],title='Practical Issues'),
                ncol=1)
 dev.off()
 
@@ -520,6 +543,12 @@ dev.off()
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ## Demographic Variables plots
 
+# make age of caregiver into a group of 5 year bands, as a factor
+df[, age_caregiver_grp := cut(as.numeric(as.character(age_caregiver)), 
+                              breaks = seq(15, 65, by = 5), 
+                              labels = c('15-19','20-24','25-29','30-34','35-39','40-44','45-49','50-54','55-59','60-64'))]
+
+
 # AS PLOT
 
 demdistplot <- function(dv, weighted = TRUE) {
@@ -592,6 +621,189 @@ dev.off()
 # AS TABLE (TODO)
 
 
+## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## SAVE ENVIRONMENT HERE 
+#save.image('besd_lca.RData')
+## LOAD HERE
+#load('besd_lca.RData')
+
+
+
+
+## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## simple regression
+
+# set up variables to include in regressions
+# set up as factors with hypothesized 'worser' levels higher up (will be >1 OR in regression)
+demvarsreg <- 
+  c('strate', 'sex_hhlead', 'ethnie_hhlead','etat_civil_caregiver',
+    'age_caregiver_grp','education_level_caregiver',
+    'religion_caregiver','wealth_quintile')
+
+# relabel factors
+label(df$strate) <- 'Setting'
+levels(df$strate) <- c('Urban','Rural')
+
+levels(df$sex_hhlead) <- c('male','female')
+label(df$sex_hhlead)  <- 'Sex of HH Head'
+
+label(df$ethnie_hhlead) <- 'Ethnicity of HH Head'
+
+label(df$etat_civil_caregiver)  <- 'Marital Status of Caregiver'
+levels(df$etat_civil_caregiver) <- c('Married','Common-law','Separated','Single','Divorced','Widowed')
+df$etat_civil_caregiver <- relevel(df$etat_civil_caregiver, ref = "Married")
+
+label(df$age_caregiver_grp) <- 'Age of Caregiver'
+
+label(df$education_level_caregiver) <- 'Education Level of Caregiver'
+levels(df$education_level_caregiver) <- c('Never been to school','Primary','Secondary',
+                                          'Higher','Dont know','No response')
+df$education_level_caregiver <- relevel(df$education_level_caregiver, ref = "Higher")
+
+label(df$religion_caregiver) <- 'Religion of Caregiver'
+levels(df$religion_caregiver) <- c('No religion','Catholic','Protestant',
+                                    'Kimbanguist','Muslim','Revival/Independent Church',
+                                    'Other','Dont know','No response')
+df$religion_caregiver <- relevel(df$religion_caregiver, ref = "Catholic")
+
+
+label(df$wealth_quintile) <- 'Wealth Quintile'
+levels(df$wealth_quintile) <- c('Poorest','Poorer','Middle','Richer','Richest')
+# order all levels richest to poorest 
+df$wealth_quintile <- fct_relevel(df$wealth_quintile, 'Richest','Richer','Middle','Poorer','Poorest')
+
+
+
+## ~~~~
+## How much do tf and sp explain motivation? 
+forml1 <- as.formula(paste0('motivation_cllab=="1. Motivated" ~',paste0(tf_vars,collapse='+'),
+                            '+',paste0(sp_vars,collapse='+')))
+forml2 <- as.formula(paste0('motivation_cllab=="1. Motivated" ~ thinkingfeeling_cllab + socialprocesses_cllab'))
+
+# with the full model, only about 45% of the variance in motivation is explained, meaning we should keep it in a full model
+summ(glm(forml1,data=df, family='binomial'),exp=TRUE) # R2 ~ 0.45
+summ(glm(forml2,data=df, family='binomial'),exp=TRUE) # R2 ~ 0.39
+
+
+
+## ~~~~
+## How much do the besd categories explain ZD (versus both UI and FIC)
+forml1 <- as.formula(paste0('zd ~',paste0(tf_vars,collapse='+'),'+',paste0(sp_vars,collapse='+'),
+                            '+',paste0(pi_vars,collapse='+'),'+',paste0(m_vars,collapse='+')))
+forml2 <- as.formula(paste0('zd ~ thinkingfeeling_cllab + socialprocesses_cllab + practicalissues_cllab + motivation_cllab'))
+
+# 
+summ(glm(forml1,data=df, family='binomial'),exp=TRUE) # R2 ~ 0.40
+summ(glm(forml2,data=df, family='binomial'),exp=TRUE) # R2 ~ 0.36
+
+
+## ~~~~
+## Add in demographic and geog variables to the above 
+forml1 <- as.formula(paste0('zd ~',paste0(tf_vars,collapse='+'),'+',
+                                   paste0(sp_vars,collapse='+'),'+',
+                                   paste0(pi_vars,collapse='+'),'+',
+                                   paste0(m_vars,collapse='+'),
+                                   '+ province +',
+                                   paste0(demvarsreg,collapse='+')))
+forml2 <- as.formula(paste0('zd ~ thinkingfeeling_cllab + socialprocesses_cllab + practicalissues_cllab + motivation_cllab + ',
+                            paste0(demvarsreg,collapse='+'), '+ province'))
+
+# The lack of diff in R2 may indicate that the explanatory value differntial in 
+#  full Qs vs BeSD summary Qs is explained by the demographic variables
+summ(glm(forml1,data=df, family='binomial'),exp=TRUE) # R2 ~ 0.50
+modzd <- glm(forml2,data=df, family='binomial')
+summ(modzd,exp=TRUE) # R2 ~ 0.50
+# demographic/geog only: R2 ~ 0.29 (so a big diff coming in BeSD only) 
+#  <<GOOD STORY FOR PAPER, LEAVE WITH THIS SIMPLE MODEL AND LEAVE MORE COMPLEX MODELLING FOR NEXT PAPER>>
+
+
+
+
+## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## FULL MODELS FOR PAPER
+## TODO: DO USING SVY PACKAGE
+# (ZD, >12m, ZD versus any vx)
+zddf <- df[c_age_m>=12]
+formlzd <- as.formula(paste0('zd ~ thinkingfeeling_cllab + socialprocesses_cllab + practicalissues_cllab + motivation_cllab + ',
+                            paste0(demvarsreg,collapse='+'), '+ province'))
+modzd <- glm(formlzd,data=zddf, family='binomial') #, weights = zddf$weight)
+
+# (UI, >12m, UI versus FIC
+uidf <- df[c_age_m>=12 & zd==0]
+formlui <- as.formula(paste0('ui ~ thinkingfeeling_cllab + socialprocesses_cllab + practicalissues_cllab + motivation_cllab + ',
+                            paste0(demvarsreg,collapse='+'), '+ province'))
+modui <- glm(formlui,data=uidf, family='binomial')
+
+## Report out
+# export the summary tables in an ugly format
+as.data.table(cbind(row.names(summ(modzd,exp=T)$coeftable),summ(modzd,exp=T)$coeftable)) %>%
+  fwrite('ZD model coefficients.csv')
+as.data.table(cbind(row.names(summ(modui,exp=T)$coeftable),summ(modui,exp=T)$coeftable)) %>%
+  fwrite('UI model coefficients.csv')
+
+
+# TABLE in a nice format (TODO)
+summ(modui,exp=T)$coeftable
+
+
+
+# PLOT
+# plot the coefficients of the besd vars only with reference categories
+cleanregbesdvarsforplot <- function(modobj,datlab=NULL){
+  tmp <- as.data.table(summ(modobj,exp=T)$coeftable[,1:3])
+  names(tmp) <- c('estimate','conf.low','conf.high')
+  tmp$level <- rownames(summ(modui,exp=T)$coeftable)
+  tmp <- tmp[grepl('thinkingfeeling|socialprocesses|practicalissues|motivation',tmp$level),]
+  tmp$besd_category <- sapply(strsplit(tmp$level,'_cllab'), function(x) x[1])
+  tmp$level         <- sapply(strsplit(tmp$level,'_cllab'), function(x) x[2])
+  tmp <- merge(tmp,unique(besd_cbl[,c('besd_category','besd_category_nice')]),by='besd_category')
+  tmprefs <- tmp[!duplicated(tmp$besd_category)]
+  tmprefs[, c('estimate','conf.low','conf.high') := 1]
+  tmprefs[besd_category=='thinkingfeeling',
+          level := paste0(df$thinkingfeeling_cllab[grepl('1. ',df$thinkingfeeling_cllab)][1],'\n(ref)')]
+  tmprefs[besd_category=='socialprocesses',
+          level := paste0(df$socialprocesses_cllab[grepl('1. ',df$socialprocesses_cllab)][1],'\n(ref)')]
+  tmprefs[besd_category=='practicalissues',
+          level := paste0(df$practicalissues_cllab[grepl('1. ',df$practicalissues_cllab)][1],'\n(ref)')]
+  tmprefs[besd_category=='motivation',
+          level := paste0(df$motivation_cllab[grepl('1. ',df$motivation_cllab)][1],'\n(ref)')]
+  tmp <- rbind(tmp,tmprefs)
+  tmp[, besd_category_nice := factor(besd_category_nice, levels=bcnsord)]
+  if(!is.null(datlab)) tmp$datlab <- datlab
+  return(tmp)
+}
+plotdat <- rbind(
+  cleanregbesdvarsforplot(modzd,datlab='Zero-Dose\nversus\nany vaccinations'),
+  cleanregbesdvarsforplot(modui,datlab='Under-Vaccinated\nversus\nFully-Vaccinated'))
+
+# plot
+pdf('figure5 -- BeSD regression coefficients.pdf',width=15,height=10)
+ggplot(plotdat) +
+  geom_vline(xintercept=1,linetype='dashed',color='grey') +
+  
+  geom_pointrange(aes(y=level,x=estimate,xmin=conf.low,xmax=conf.high,color=datlab),
+                  position=position_dodge(width=0.3)) +
+  facet_wrap(~besd_category_nice,scales='free_y') +
+  theme(axis.text.x=element_text(angle=45,hjust=1)) +
+  scale_color_manual(values=colz, name='') +
+  scale_x_continuous(limits=c(0,NA), name='Odds Ratio')+
+  ylab('') +
+  ggtitle('Odds Ratios of BeSD Categories in Predicting Zero-Dose and Under-Immunized Status') +
+  theme(legend.position='bottom')
+dev.off()
+
+
+# export the summary table in a nice fort
+
+
+# "Adding the BeSD to the model explains an additional 21% of the variance in the outcome that was not explained by the lesser model."
+
+
+
+
+
+
+
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ## SEM
@@ -640,7 +852,7 @@ dev.off()
 # ggplot(df[Ninterviewer>10]) +
 #   geom_histogram(aes(dayssincestart))
 # 
-# jtools::summ(glm(opv1_card==1 ~ dayssincestart + svyyear + province ,
+# summ(glm(opv1_card==1 ~ dayssincestart + svyyear + province ,
 #                  data=df[Ninterviewer>10 & dayssincestart<40],
 #                  family=binomial))
 # 
@@ -662,7 +874,7 @@ dev.off()
 # df[,hrsincestart :=hour-min(hour), by = .(int_date,interviewer2)]
 # ggplot(df[Ninterviewer>10 & svyyear=='ECV 2022' & hrsincestart<18]) +
 #   geom_histogram(aes(hrsincestart))
-# jtools::summ(glm(opv1_card==1 ~ hour, data=df[svyyear=='ECV 2022'], family='binomial'),exp=T)
+# summ(glm(opv1_card==1 ~ hour, data=df[svyyear=='ECV 2022'], family='binomial'),exp=T)
 # 
 # tmp <- df[svyyear=='ECV 2022' & hrsincestart<20,.(N=.N),by=.(hrsincestart,opv1_card)]
 # tmp[, pct := N/sum(N), by = .(hrsincestart)]
@@ -693,7 +905,7 @@ dev.off()
 # # 
 # # library(lme4)
 # # m<-glmer(opv1_card==1 ~ dayssincestart + svyyear + province + (1|interviewer2), data=df, family='binomial')
-# # jtools::summ(m,exp=TRUE)
+# # summ(m,exp=TRUE)
 # # 
 # 
 # 

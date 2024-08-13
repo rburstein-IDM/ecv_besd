@@ -1,0 +1,5 @@
+*.RDS
+*.RData
+!province_shapefile.RDS
+!hz_shapefile.RDS
+/data
