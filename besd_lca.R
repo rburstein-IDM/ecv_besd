@@ -546,11 +546,12 @@ dev.off()
 # make age of caregiver into a group of 5 year bands, as a factor
 df[, age_caregiver_grp := cut(as.numeric(as.character(age_caregiver)), 
                               breaks = seq(15, 65, by = 5), 
-                              labels = c('15-19','20-24','25-29','30-34','35-39','40-44','45-49','50-54','55-59','60-64'))]
-
-
+                              labels = c('18-20','21-25','26-30','31-35','36-40','41-45','46-50','51-55','56-60','60+'))]
+df[as.numeric(as.character(age_caregiver))>50, age_caregiver_grp := '> 50']
+df[as.numeric(as.character(age_caregiver))<18, age_caregiver_grp := '< 18']
+df[, age_caregiver_grp := factor(age_caregiver_grp, levels=rev(c('< 18','18-20','21-25','26-30','31-35','36-40',
+                                                             '41-45','46-50','> 50')))]
 # AS PLOT
-
 demdistplot <- function(dv, weighted = TRUE) {
   message(paste(dv,'----------'))
   tmp <- copy(df)
@@ -621,12 +622,13 @@ dev.off()
 # AS TABLE (TODO)
 
 
+
+
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ## SAVE ENVIRONMENT HERE 
 #save.image('besd_lca.RData')
 ## LOAD HERE
 #load('besd_lca.RData')
-
 
 
 
@@ -657,13 +659,13 @@ label(df$age_caregiver_grp) <- 'Age of Caregiver'
 
 label(df$education_level_caregiver) <- 'Education Level of Caregiver'
 levels(df$education_level_caregiver) <- c('Never been to school','Primary','Secondary',
-                                          'Higher','Dont know','No response')
+                                          'Higher','Do not know','No response')
 df$education_level_caregiver <- relevel(df$education_level_caregiver, ref = "Higher")
 
 label(df$religion_caregiver) <- 'Religion of Caregiver'
 levels(df$religion_caregiver) <- c('No religion','Catholic','Protestant',
                                     'Kimbanguist','Muslim','Revival/Independent Church',
-                                    'Other','Dont know','No response')
+                                    'Other','Dont know','No response ')
 df$religion_caregiver <- relevel(df$religion_caregiver, ref = "Catholic")
 
 
@@ -672,7 +674,13 @@ levels(df$wealth_quintile) <- c('Poorest','Poorer','Middle','Richer','Richest')
 # order all levels richest to poorest 
 df$wealth_quintile <- fct_relevel(df$wealth_quintile, 'Richest','Richer','Middle','Poorer','Poorest')
 
+label(df$thinkingfeeling_cllab) <- 'Thinking/Feeling'
+label(df$socialprocesses_cllab) <- 'Social Processes'
+label(df$motivation_cllab) <- 'Motivation'
+label(df$practicalissues_cllab) <- 'Practical Issues'
 
+label(df$province) <- 'Province'
+label(df$age_caregiver_grp) <- 'Age of Caregiver'
 
 ## ~~~~
 ## How much do tf and sp explain motivation? 
@@ -719,6 +727,7 @@ summ(modzd,exp=TRUE) # R2 ~ 0.50
 
 
 
+
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ## FULL MODELS FOR PAPER
 ## TODO: DO USING SVY PACKAGE
@@ -734,57 +743,77 @@ formlui <- as.formula(paste0('ui ~ thinkingfeeling_cllab + socialprocesses_cllab
                             paste0(demvarsreg,collapse='+'), '+ province'))
 modui <- glm(formlui,data=uidf, family='binomial')
 
-## Report out
-# export the summary tables in an ugly format
-as.data.table(cbind(row.names(summ(modzd,exp=T)$coeftable),summ(modzd,exp=T)$coeftable)) %>%
-  fwrite('ZD model coefficients.csv')
-as.data.table(cbind(row.names(summ(modui,exp=T)$coeftable),summ(modui,exp=T)$coeftable)) %>%
-  fwrite('UI model coefficients.csv')
 
 
-# TABLE in a nice format (TODO)
-summ(modui,exp=T)$coeftable
-
-
-
-# PLOT
-# plot the coefficients of the besd vars only with reference categories
-cleanregbesdvarsforplot <- function(modobj,datlab=NULL){
-  tmp <- as.data.table(summ(modobj,exp=T)$coeftable[,1:3])
-  names(tmp) <- c('estimate','conf.low','conf.high')
-  tmp$level <- rownames(summ(modui,exp=T)$coeftable)
-  tmp <- tmp[grepl('thinkingfeeling|socialprocesses|practicalissues|motivation',tmp$level),]
-  tmp$besd_category <- sapply(strsplit(tmp$level,'_cllab'), function(x) x[1])
-  tmp$level         <- sapply(strsplit(tmp$level,'_cllab'), function(x) x[2])
-  tmp <- merge(tmp,unique(besd_cbl[,c('besd_category','besd_category_nice')]),by='besd_category')
-  tmprefs <- tmp[!duplicated(tmp$besd_category)]
-  tmprefs[, c('estimate','conf.low','conf.high') := 1]
-  tmprefs[besd_category=='thinkingfeeling',
-          level := paste0(df$thinkingfeeling_cllab[grepl('1. ',df$thinkingfeeling_cllab)][1],'\n(ref)')]
-  tmprefs[besd_category=='socialprocesses',
-          level := paste0(df$socialprocesses_cllab[grepl('1. ',df$socialprocesses_cllab)][1],'\n(ref)')]
-  tmprefs[besd_category=='practicalissues',
-          level := paste0(df$practicalissues_cllab[grepl('1. ',df$practicalissues_cllab)][1],'\n(ref)')]
-  tmprefs[besd_category=='motivation',
-          level := paste0(df$motivation_cllab[grepl('1. ',df$motivation_cllab)][1],'\n(ref)')]
-  tmp <- rbind(tmp,tmprefs)
-  tmp[, besd_category_nice := factor(besd_category_nice, levels=bcnsord)]
+### TABLE
+# export the summary table in a nice format
+cleanregressiontable <- function(modobj,datlab=NULL){
+  tmp <- as.data.table(summ(modobj,exp=T)$coeftable)
+  names(tmp) <- c('estimate','conf.low','conf.high','z','p')
+  tmp$level <- rownames(summ(modobj,exp=T)$coeftable)
+  # sep out variable name from varlevl variable
+  for(v in all.vars(modobj$formula)[-1]){
+    tmp[grepl(v,level), variable := v]
+    tmp[grepl(v,level), level := gsub(v,'',level)]
+  }
+  tmp$variable[1] <- '_Intercept'
+  # make order_id variable by variable
+  tmp[, order_id := 1:.N, by = variable]
+  # add the ref category from each
+  reftemplate<-copy(tmp)[1,]
+  reftemplate[, c('estimate','conf.low','conf.high') := 1]
+  reftemplate[, c('z','p') := NA]
+  reftemplate[, order_id := 0]
+  reftab <- copy(tmp)[0,]
+  for(v in all.vars(modobj$formula)[-1]){
+    lvlsdat <- unique(modobj$data[[v]])
+    lvlstab <- unique(tmp[variable==v]$level)
+    ref     <- lvlsdat[!lvlsdat%in%lvlstab]
+    if(length(ref)==1){
+      reftemplate[, variable := v]
+      reftemplate[, level := paste0(ref,' (ref)')]
+      reftab <- rbind(reftab,reftemplate)
+    } else {
+      message(paste('No reference found for var',v))
+    }
+  }
+  tmp[, variable := factor(variable, levels=c('_Intercept',all.vars(modobj$formula)[-1]))]
+  tmp <- rbind(tmp,reftab)[order(variable,order_id)]
+  
+  # nice variable names and orderings
+  for(v in unique(tmp$variable)){
+    if(label(modobj$data[[v]])=='') tmp[variable==v,varnice := v]
+    else tmp[variable==v,varnice := label(modobj$data[[v]])]
+  }
+  tmp[,varnice := factor(varnice, levels=unique(tmp[order(variable)]$varnice))]
+  
+  tmp[, level := factor(level, levels=tmp$level)]
+  
+  #clean up table
+  tmp <- tmp[, c('varnice','level','estimate','conf.low','conf.high','z','p')]
+  tmp[, c('estimate','conf.low','conf.high','z','p') := lapply(.SD, function(x) round(x,2)), .SDcols = c('estimate','conf.low','conf.high','z','p')]
+  names(tmp) <- c('Variable','Level','Odds Ratio','95% CI Lower','95% CI Upper','Z','p')
   if(!is.null(datlab)) tmp$datlab <- datlab
   return(tmp)
 }
-plotdat <- rbind(
-  cleanregbesdvarsforplot(modzd,datlab='Zero-Dose\nversus\nany vaccinations'),
-  cleanregbesdvarsforplot(modui,datlab='Under-Vaccinated\nversus\nFully-Vaccinated'))
+zdtab <- cleanregressiontable(modzd,datlab='Zero-Dose versus any vaccination')
+uitab <- cleanregressiontable(modui,datlab='Under-Immunized versus Fully-Immunized')
 
-# plot
-pdf('figure5 -- BeSD regression coefficients.pdf',width=15,height=10)
-ggplot(plotdat) +
+# export the summary tables 
+as.data.table(zdtab) %>% fwrite('ZD model coefficients.csv')
+as.data.table(uitab) %>%  fwrite('UI model coefficients.csv')
+
+
+## PLOT
+pdf('figure6 -- all regression coefficients.pdf',width=25,height=20)
+ggplot(rbind(zdtab,uitab)) +
   geom_vline(xintercept=1,linetype='dashed',color='grey') +
   
-  geom_pointrange(aes(y=level,x=estimate,xmin=conf.low,xmax=conf.high,color=datlab),
+  geom_pointrange(aes(y=Level,x=`Odds Ratio`,xmin=`95% CI Lower`,xmax=`95% CI Upper`,color=datlab),
                   position=position_dodge(width=0.3)) +
-  facet_wrap(~besd_category_nice,scales='free_y') +
-  theme(axis.text.x=element_text(angle=45,hjust=1)) +
+  facet_wrap(~Variable,scales='free_y') +
+  theme(axis.text.x=element_text(angle=45,hjust=1),
+        axis.text.y=element_text(size=15)) +
   scale_color_manual(values=colz, name='') +
   scale_x_continuous(limits=c(0,NA), name='Odds Ratio')+
   ylab('') +
@@ -793,16 +822,21 @@ ggplot(plotdat) +
 dev.off()
 
 
-# export the summary table in a nice fort
-
-
-# "Adding the BeSD to the model explains an additional 21% of the variance in the outcome that was not explained by the lesser model."
-
-
-
-
-
-
+pdf('figure5 -- BeSD regression coefficients.pdf',width=18,height=12)
+ggplot(rbind(zdtab,uitab)[Variable %in% c('Thinking/Feeling','Social Processes','Motivation','Practical Issues')]) +
+  geom_vline(xintercept=1,linetype='dashed',color='grey') +
+  
+  geom_pointrange(aes(y=Level,x=`Odds Ratio`,xmin=`95% CI Lower`,xmax=`95% CI Upper`,color=datlab),
+                  position=position_dodge(width=0.3)) +
+  facet_wrap(~Variable,scales='free_y') +
+  theme(axis.text.x=element_text(angle=45,hjust=1),
+        axis.text.y=element_text(size=15)) +
+  scale_color_manual(values=colz, name='') +
+  scale_x_continuous(limits=c(0,NA), name='Odds Ratio')+
+  ylab('') +
+  ggtitle('Odds Ratios of BeSD Categories in Predicting Zero-Dose and Under-Immunized Status') +
+  theme(legend.position='bottom')
+dev.off()
 
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
