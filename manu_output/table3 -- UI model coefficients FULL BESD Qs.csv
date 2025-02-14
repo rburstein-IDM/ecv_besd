@@ -1,0 +1,261 @@
+Variable,Level,Odds Ratio,95% CI Lower,95% CI Upper,Z,p,datlab
+_Intercept,(Intercept),1.09,0.62,1.9,0.3,0.76,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Confidence in vaccine benefits,Not at all important (ref),1,1,1,,,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Confidence in vaccine benefits,A little important,1.09,0.83,1.42,0.62,0.53,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Confidence in vaccine benefits,Moderately important,1.21,0.96,1.52,1.58,0.11,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Confidence in vaccine benefits,Very important,1.22,0.97,1.54,1.73,0.08,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Confidence in vaccine safety,Not at all safe (ref),1,1,1,,,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Confidence in vaccine safety,A little safe,1.22,0.93,1.59,1.43,0.15,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Confidence in vaccine safety,Moderately Safe,1.09,0.86,1.39,0.7,0.48,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Confidence in vaccine safety,Very safe,0.95,0.75,1.19,-0.46,0.64,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Confidence in  healthworkers,Not at all (ref),1,1,1,,,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Confidence in  healthworkers,A little,1.25,0.97,1.6,1.75,0.08,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Confidence in  healthworkers,Moderately,1.15,0.92,1.45,1.23,0.22,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Confidence in  healthworkers,Very much,1.01,0.81,1.27,0.11,0.91,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Intention to get the child vaccinated,No (ref),1,1,1,,,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Intention to get the child vaccinated,Not sure,1.81,1.49,2.19,6,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Intention to get the child vaccinated,Yes,0.95,0.83,1.09,-0.67,0.5,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Intention to get the child vaccinated,No Response,1.11,0.77,1.6,0.54,0.59,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Family norms,Yes (ref),1,1,1,,,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Family norms,No,1.07,1,1.14,1.83,0.07,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Peer norms,Yes (ref),1,1,1,,,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Peer norms,No,1.21,1.14,1.29,5.86,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Religious leader norms,Yes (ref),1,1,1,,,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Religious leader norms,No,0.93,0.87,0.99,-2.22,0.03,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Community leader norms,Yes (ref),1,1,1,,,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Community leader norms,No,1.04,0.97,1.12,1.17,0.24,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Community leader norms,No Response,1.2,1.08,1.33,3.39,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Health worker recommendation,Yes (ref),1,1,1,,,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Health worker recommendation,No,1.13,1.08,1.19,4.9,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Mother's travel autonomy,Yes (ref),1,1,1,,,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Mother's travel autonomy,No,0.96,0.92,0.99,-2.29,0.02,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Know where to get child vaccinated,Yes (ref),1,1,1,,,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Know where to get child vaccinated,No,1.17,1.03,1.32,2.4,0.02,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Affordability,Not at all easy (ref),1,1,1,,,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Affordability,Quite difficult,0.85,0.77,0.94,-3.08,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Affordability,Moderately easy,0.76,0.7,0.83,-6.25,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Affordability,Very easy,0.82,0.76,0.88,-5.73,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Received recall,Yes (ref),1,1,1,,,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Received recall,No,1.13,1.08,1.19,4.91,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Vaccination availability,Yes (ref),1,1,1,,,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Vaccination availability,No,0.76,0.72,0.8,-9.95,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Vaccination availability,No Response,0.58,0.32,1.05,-1.81,0.07,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Ease of access,Not at all easy (ref),1,1,1,,,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Ease of access,Quite difficult,0.84,0.72,0.98,-2.17,0.03,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Ease of access,Moderately easy,0.89,0.78,1.02,-1.61,0.11,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Ease of access,Very easy,0.79,0.7,0.89,-3.71,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Service satisfaction,Not at all satisfied (ref),1,1,1,,,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Service satisfaction,A little satisfied,0.87,0.69,1.1,-1.15,0.25,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Service satisfaction,Moderately satisfied,0.72,0.58,0.89,-3.02,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Service satisfaction,Very satisfied,0.42,0.34,0.52,-8.01,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Setting,Urban (ref),1,1,1,,,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Setting,Rural,0.92,0.86,0.98,-2.54,0.01,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Sex of HH Head,male (ref),1,1,1,,,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Sex of HH Head,female,1.06,0.97,1.16,1.26,0.21,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Ethnicity of HH Head,Luba (ref),1,1,1,,,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Ethnicity of HH Head,Kongo,1.02,0.91,1.13,0.28,0.78,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Ethnicity of HH Head,Swahili,1.02,0.92,1.13,0.35,0.73,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Ethnicity of HH Head,Mungala,0.99,0.87,1.12,-0.2,0.84,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Ethnicity of HH Head,Autre,1.1,1,1.21,1.95,0.05,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Marital Status of Caregiver,Married (ref),1,1,1,,,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Marital Status of Caregiver,Common-law,1.19,1.13,1.24,7.49,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Marital Status of Caregiver,Separated,1.13,0.99,1.29,1.76,0.08,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Marital Status of Caregiver,Single,1.1,0.98,1.23,1.56,0.12,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Marital Status of Caregiver,Divorced,0.9,0.62,1.3,-0.56,0.57,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Marital Status of Caregiver,Widowed,1.13,0.87,1.48,0.92,0.36,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Age of Caregiver,> 50 (ref),1,1,1,,,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Age of Caregiver,46-50,1.15,0.79,1.67,0.71,0.48,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Age of Caregiver,41-45,1.16,0.86,1.57,0.97,0.33,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Age of Caregiver,36-40,1.13,0.84,1.52,0.83,0.41,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Age of Caregiver,31-35,1.17,0.87,1.56,1.04,0.3,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Age of Caregiver,26-30,1.15,0.86,1.54,0.96,0.34,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Age of Caregiver,21-25,1.25,0.93,1.67,1.49,0.14,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Age of Caregiver,18-20,1.29,0.96,1.73,1.71,0.09,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Age of Caregiver,< 18,1.41,1.02,1.94,2.09,0.04,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Education Level of Caregiver,Higher (ref),1,1,1,,,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Education Level of Caregiver,Never been to school,1.9,1.65,2.19,8.8,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Education Level of Caregiver,Primary,1.91,1.68,2.18,9.63,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Education Level of Caregiver,Secondary,1.66,1.46,1.88,7.82,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Education Level of Caregiver,Do not know,2.86,1.43,5.7,2.98,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Education Level of Caregiver,No response,1.8,1.2,2.7,2.86,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Religion of Caregiver,Catholic (ref),1,1,1,,,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Religion of Caregiver,No religion,0.97,0.81,1.15,-0.39,0.7,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Religion of Caregiver,Protestant,1.05,1,1.11,2.1,0.04,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Religion of Caregiver,Kimbanguist,1.11,0.99,1.25,1.84,0.07,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Religion of Caregiver,Muslim,1.13,0.95,1.34,1.35,0.18,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Religion of Caregiver,Revival/Independent Church,1.2,1.14,1.27,6.92,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Religion of Caregiver,Other,1.33,1.2,1.47,5.57,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Religion of Caregiver,Dont know,0.41,0.13,1.25,-1.57,0.12,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Religion of Caregiver,No response ,0.74,0.45,1.22,-1.19,0.23,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Wealth Quintile,Richest (ref),1,1,1,,,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Wealth Quintile,Richer,1.24,1.16,1.32,6.69,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Wealth Quintile,Middle,1.26,1.18,1.35,6.62,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Wealth Quintile,Poorer,1.32,1.22,1.42,7.22,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Wealth Quintile,Poorest,1.26,1.16,1.36,5.56,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Occupation of HH Head,Without profession (ref),1,1,1,,,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Occupation of HH Head,Teacher,1.02,0.93,1.12,0.35,0.72,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Occupation of HH Head,Civil servant,1.04,0.94,1.15,0.7,0.48,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Occupation of HH Head,Farmer/herder,1.1,1.01,1.19,2.25,0.02,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Occupation of HH Head,Fisherman,1.17,1.03,1.32,2.45,0.01,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Occupation of HH Head,Trader,1.02,0.93,1.12,0.36,0.72,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Occupation of HH Head,Laborer,1.03,0.92,1.14,0.51,0.61,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Occupation of HH Head,Other Profession,1.06,0.97,1.17,1.27,0.2,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Occupation of HH Head,Student,1.14,0.94,1.39,1.32,0.19,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Province,bu Bas Uele Province (ref),1,1,1,,,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Province,eq Equateur Province,1.51,1.27,1.78,4.78,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Province,hk Haut Katanga Province,0.73,0.6,0.88,-3.23,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Province,hl Haut Lomami Province,0.2,0.17,0.25,-15.13,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Province,hu Haut Uele Province,0.87,0.72,1.05,-1.44,0.15,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Province,it Ituri Province,0.67,0.56,0.8,-4.46,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Province,kc Kongo Central Province,0.62,0.51,0.76,-4.7,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Province,ke Kasai Oriental Province,1.25,1.01,1.54,2.07,0.04,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Province,kg Kwango Province,0.46,0.38,0.57,-7.43,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Province,kl Kwilu Province,0.24,0.2,0.29,-13.8,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Province,kn Kinshasa Province,0.35,0.29,0.42,-10.73,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Province,kr Kasai Central Province,1,0.82,1.22,-0.01,0.99,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Province,ks Kasai Province,0.9,0.73,1.09,-1.08,0.28,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Province,ll Lualaba Province,0.67,0.55,0.83,-3.74,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Province,lm Lomami Province,1.07,0.87,1.3,0.63,0.53,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Province,md Maindombe Province,0.33,0.27,0.39,-12.08,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Province,mg Mongala Province,1.56,1.27,1.92,4.28,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Province,mn Maniema Province,1.37,1.09,1.7,2.76,0.01,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Province,nk Nord Kivu Province,0.58,0.48,0.7,-5.63,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Province,nu Nord Ubangi Province,0.36,0.3,0.43,-10.67,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Province,sk Sud Kivu Province,0.71,0.59,0.86,-3.52,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Province,sn Sankuru Province,1.59,1.27,1.99,4.02,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Province,su Sud Ubangi Province,1.65,1.38,1.97,5.43,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Province,tn Tanganyika Province,0.58,0.47,0.71,-5.17,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Province,tp Tshopo Province,1.3,1.07,1.59,2.59,0.01,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+Province,tu Tshuapa Province,2.14,1.73,2.64,7.04,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+svyyear,ECV 2022 (ref),1,1,1,,,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"
+svyyear,ECV 2023,1.35,1.3,1.4,14.74,0,"Under-Vaccinated versus Fully-Vaccinated
+(UV vs. FV)"

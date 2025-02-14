@@ -1,0 +1,185 @@
+Variable,Level,Odds Ratio,95% CI Lower,95% CI Upper,Z,p,datlab
+_Intercept,(Intercept),0.02,0.01,0.03,-17.14,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Thinking/Feeling,1. Positive Thinking/Feeling (ref),1,1,1,,,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Thinking/Feeling,2. Moderate Thinking/Feeling,1.78,1.66,1.9,17.1,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Thinking/Feeling,3. Negative Thinking/Feeling,4.46,4.13,4.82,37.73,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Social Processes,1. Positive Norms (ref),1,1,1,,,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Social Processes,2. Positive Norms with low autonomy,1.01,0.95,1.08,0.39,0.7,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Social Processes,3. Negative Norms,1.79,1.68,1.9,18.37,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Practical Issues,1. Fewer Practical Issues (ref),1,1,1,,,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Practical Issues,2. More Practical Issues,2.02,1.9,2.14,23.22,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Motivation,1. Higher motivation (ref),1,1,1,,,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Motivation,2. Lower motivation,5.48,5.13,5.85,50.6,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Setting,Urban (ref),1,1,1,,,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Setting,Rural,1.09,1,1.19,2.02,0.04,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Sex of HH Head,male (ref),1,1,1,,,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Sex of HH Head,female,1.16,1.04,1.3,2.65,0.01,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Ethnicity of HH Head,Luba (ref),1,1,1,,,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Ethnicity of HH Head,Kongo,1.4,1.15,1.72,3.28,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Ethnicity of HH Head,Swahili,1.3,1.12,1.5,3.52,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Ethnicity of HH Head,Mungala,1.56,1.32,1.85,5.11,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Ethnicity of HH Head,Autre,0.98,0.86,1.12,-0.34,0.74,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Marital Status of Caregiver,Married (ref),1,1,1,,,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Marital Status of Caregiver,Common-law,1.01,0.95,1.07,0.4,0.69,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Marital Status of Caregiver,Separated,1.16,0.99,1.36,1.81,0.07,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Marital Status of Caregiver,Single,1.17,1.01,1.35,2.14,0.03,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Marital Status of Caregiver,Divorced,1.01,0.66,1.53,0.03,0.98,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Marital Status of Caregiver,Widowed,0.83,0.61,1.12,-1.24,0.21,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Age of Caregiver,> 50 (ref),1,1,1,,,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Age of Caregiver,46-50,0.7,0.48,1.02,-1.87,0.06,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Age of Caregiver,41-45,0.52,0.38,0.71,-4.1,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Age of Caregiver,36-40,0.54,0.4,0.73,-4.05,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Age of Caregiver,31-35,0.52,0.38,0.7,-4.34,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Age of Caregiver,26-30,0.5,0.37,0.68,-4.52,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Age of Caregiver,21-25,0.53,0.4,0.71,-4.18,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Age of Caregiver,18-20,0.56,0.42,0.76,-3.73,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Age of Caregiver,< 18,0.61,0.44,0.86,-2.85,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Education Level of Caregiver,Higher (ref),1,1,1,,,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Education Level of Caregiver,Never been to school,2.83,2.17,3.69,7.67,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Education Level of Caregiver,Primary,2.49,1.93,3.23,6.93,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Education Level of Caregiver,Secondary,1.98,1.53,2.55,5.24,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Education Level of Caregiver,Do not know,1.72,0.64,4.59,1.08,0.28,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Education Level of Caregiver,No response,4.55,2.5,8.28,4.96,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Religion of Caregiver,Catholic (ref),1,1,1,,,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Religion of Caregiver,No religion,1.46,1.2,1.76,3.89,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Religion of Caregiver,Protestant,1.11,1.03,1.19,2.91,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Religion of Caregiver,Kimbanguist,1.19,1.03,1.38,2.37,0.02,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Religion of Caregiver,Muslim,1.32,1.1,1.59,2.93,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Religion of Caregiver,Revival/Independent Church,1.36,1.26,1.45,8.56,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Religion of Caregiver,Other,1.59,1.41,1.8,7.38,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Religion of Caregiver,Dont know,0.84,0.17,4.07,-0.22,0.82,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Religion of Caregiver,No response ,1.68,1.03,2.75,2.06,0.04,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Wealth Quintile,Richest (ref),1,1,1,,,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Wealth Quintile,Richer,1.3,1.18,1.44,5.19,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Wealth Quintile,Middle,1.63,1.47,1.81,9.38,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Wealth Quintile,Poorer,1.67,1.5,1.86,9.33,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Wealth Quintile,Poorest,1.77,1.58,1.98,10.11,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Occupation of HH Head,Without profession (ref),1,1,1,,,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Occupation of HH Head,Teacher,1.04,0.91,1.18,0.6,0.55,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Occupation of HH Head,Civil servant,1.1,0.95,1.28,1.29,0.2,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Occupation of HH Head,Farmer/herder,1.25,1.12,1.4,4,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Occupation of HH Head,Fisherman,1.22,1.05,1.42,2.61,0.01,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Occupation of HH Head,Trader,1.23,1.08,1.41,3.06,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Occupation of HH Head,Laborer,1.17,1.01,1.35,2.05,0.04,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Occupation of HH Head,Other Profession,1.27,1.12,1.45,3.61,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Occupation of HH Head,Student,0.93,0.72,1.2,-0.56,0.57,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Province,bu Bas Uele Province (ref),1,1,1,,,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Province,eq Equateur Province,0.39,0.32,0.48,-9.13,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Province,hk Haut Katanga Province,2.33,1.92,2.83,8.56,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Province,hl Haut Lomami Province,0.32,0.24,0.42,-8.15,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Province,hu Haut Uele Province,2.22,1.87,2.63,9.16,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Province,it Ituri Province,0.41,0.34,0.5,-8.9,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Province,kc Kongo Central Province,0.62,0.48,0.81,-3.47,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Province,ke Kasai Oriental Province,2.63,2.09,3.32,8.16,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Province,kg Kwango Province,0.65,0.5,0.85,-3.15,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Province,kl Kwilu Province,0.43,0.32,0.56,-6.07,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Province,kn Kinshasa Province,0.32,0.25,0.42,-8.45,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Province,kr Kasai Central Province,1.09,0.86,1.38,0.7,0.48,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Province,ks Kasai Province,2.02,1.61,2.52,6.17,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Province,ll Lualaba Province,0.98,0.78,1.22,-0.21,0.84,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Province,lm Lomami Province,1.16,0.92,1.47,1.27,0.21,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Province,md Maindombe Province,1.03,0.87,1.22,0.32,0.75,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Province,mg Mongala Province,3.33,2.83,3.91,14.61,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Province,mn Maniema Province,4.53,3.74,5.5,15.29,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Province,nk Nord Kivu Province,0.17,0.13,0.22,-13.53,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Province,nu Nord Ubangi Province,0.42,0.31,0.55,-6.18,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Province,sk Sud Kivu Province,0.5,0.41,0.62,-6.47,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Province,sn Sankuru Province,7.21,5.77,8.99,17.47,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Province,su Sud Ubangi Province,0.69,0.57,0.82,-4.07,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Province,tn Tanganyika Province,0.35,0.27,0.44,-8.68,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Province,tp Tshopo Province,4.14,3.52,4.88,16.99,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+Province,tu Tshuapa Province,2.58,2.15,3.09,10.2,0,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+svyyear,ECV 2022 (ref),1,1,1,,,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"
+svyyear,ECV 2023,1.01,0.96,1.06,0.23,0.82,"Zero-Dose versus any vaccination
+(ZD vs. UV+FV)"

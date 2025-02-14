@@ -1,0 +1,8 @@
+"model","rsquared.Zero-Dose","rsquared.Under-Vaccinated"
+"All 16 BeSD Qs only",0.29,0.03
+"5 Priority BeSD Qs only",0.25,0.02
+"4 LCA-derived BeSD domains only",0.26,0.03
+"Demographics only",0.2,0.07
+"All 16 BeSD Qs + Demographics",0.39,0.1
+"5 Priority BeSD Qs + Demographics",0.36,0.09
+"4 LCA-derived BeSD domains + Demographics",0.37,0.09
