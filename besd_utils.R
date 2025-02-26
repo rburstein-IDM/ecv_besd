@@ -233,6 +233,19 @@ demdistplot <- function(dv, weighted = TRUE) {
   message(paste(dv,'----------'))
   tmp <- copy(df)
   
+  nicetitle <- dv
+  if(dv == "strate") nicetitle  <- "Stratum"                 
+  if(dv == "sex_hhlead") nicetitle  <- "Sex of HH Lead"                
+  if(dv == "ethnie_hhlead") nicetitle  <- "Ethnicity of HH Lead"         
+  if(dv == "etat_civil_caregiver") nicetitle  <- "Civil Status of Caregiver"      
+  if(dv == "age_caregiver_grp") nicetitle  <- "Age of Caregiver"         
+  if(dv == "education_level_caregiver") nicetitle  <- "Education Level of Caregiver"
+  if(dv == "religion_caregiver") nicetitle  <- "Religion of Caregiver"         
+  if(dv == "wealth_quintile") nicetitle  <- "Wealth Quintile"          
+  if(dv == "occupation_hhlead") nicetitle  <- "Occupation of HH Lead"  
+  
+  
+  
   if(dv=='age_caregiver_grp') 
     tmp <- tmp[as.numeric(as.character(age_caregiver)) < 46]
   
@@ -244,6 +257,8 @@ demdistplot <- function(dv, weighted = TRUE) {
   tmp[, dv := get(dv)]
   tmp[, besd_category := gsub('_cllab','',besd_category)]
   tmp <- merge(tmp, unique(besd_cbl[,c('besd_category','besd_category_nice')]), by='besd_category')
+  
+  # TODO merge on english translation. 
   
   
   plotlist <- list()
@@ -270,10 +285,11 @@ demdistplot <- function(dv, weighted = TRUE) {
     ggplot(tmpp) +
     geom_bar(aes(dv,N),fill='darkgrey',stat='identity') +
     theme(axis.text.y=element_blank(),
+          axis.text.x=element_text(angle=45,hjust=1),
           axis.line.y =element_blank(),
           axis.ticks.y=element_blank(),
           legend.position='right')+
-    ggtitle(dv) + 
+    ggtitle(nicetitle) + 
     scale_fill_manual(values=CLZ, name='') + xlab('') + ylab('') 
   
   # patchwork plot them
